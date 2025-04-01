@@ -1,0 +1,46 @@
+import React from 'react';
+import Navbar from "./components/Navbar.jsx";
+import Hero from "./components/Hero.jsx";
+import Services from "./components/Services.jsx";
+import PickupForm from "./components/PickupForm.jsx";
+import Footer from "./components/Footer.jsx";
+import {useState} from "react";
+
+function App() {
+    const [showForm, setShowForm] = useState(false);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const formData = {
+            name: e.target.name.value,
+            mobile: e.target.mobile.value,
+            address: e.target.address.value,
+            notes: e.target.notes.value,
+        };
+
+        try {
+            await fetch('http://localhost:5000/api/schedule-pickup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData),
+            });
+            alert('Pickup request sent!');
+            setShowForm(false);
+        } catch (error) {
+            console.error('Error sending request:', error);
+            alert('There was an error sending your request.');
+        }
+    };
+
+    return (
+        <div className="font-sans bg-gray-50 min-h-screen">
+            <Navbar />
+            <Hero />
+            <Services setShowForm = {setShowForm}/>
+            {showForm && <PickupForm showForm = {showForm} setShowForm = {setShowForm} handleSubmit = {handleSubmit}/>}
+            <Footer />
+        </div>
+    )
+}
+
+export default App
